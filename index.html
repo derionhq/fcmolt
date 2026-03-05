@@ -65,6 +65,7 @@ opacity:0.8;
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
 
@@ -85,42 +86,50 @@ document.body.appendChild(renderer.domElement)
 
 renderer.domElement.style.marginTop="40px"
 
+const controls = new THREE.OrbitControls(camera, renderer.domElement)
+
 const mat = new THREE.MeshStandardMaterial({
 color:0xff00aa,
 emissive:0xaa0077,
 metalness:1,
-roughness:0.2
+roughness:0.3
 })
 
 const lobster = new THREE.Group()
 
-// body
-const body = new THREE.Mesh(
-new THREE.SphereGeometry(1,32,32),
+// body segments
+for(let i=0;i<4;i++){
+const seg = new THREE.Mesh(
+new THREE.SphereGeometry(0.6 - i*0.08,32,32),
 mat
 )
-lobster.add(body)
+seg.position.y = i * -0.7
+lobster.add(seg)
+}
 
 // tail
 const tail = new THREE.Mesh(
-new THREE.CylinderGeometry(0.4,0.8,1.5,32),
+new THREE.ConeGeometry(0.5,1.5,32),
 mat
 )
-tail.position.y = -1.2
+tail.position.y = -3
+tail.rotation.x = Math.PI
 lobster.add(tail)
 
 // claws
-const claw1 = new THREE.Mesh(
-new THREE.BoxGeometry(0.3,1.2,0.3),
+const clawL = new THREE.Mesh(
+new THREE.CylinderGeometry(0.1,0.2,1.5,32),
 mat
 )
-claw1.position.set(-1.3,0.3,0)
+clawL.position.set(-1.2,0.3,0)
+clawL.rotation.z = 0.8
 
-const claw2 = claw1.clone()
-claw2.position.x = 1.3
+const clawR = clawL.clone()
+clawR.position.x = 1.2
+clawR.rotation.z = -0.8
 
-lobster.add(claw1)
-lobster.add(claw2)
+lobster.add(clawL)
+lobster.add(clawR)
 
 scene.add(lobster)
 
@@ -131,14 +140,13 @@ scene.add(light)
 scene.add(new THREE.AmbientLight(0xffffff,1))
 
 function animate(){
-
 requestAnimationFrame(animate)
 
-lobster.rotation.y += 0.01
-lobster.rotation.x += 0.002
+lobster.rotation.y += 0.005
+
+controls.update()
 
 renderer.render(scene,camera)
-
 }
 
 animate()
