@@ -49,8 +49,7 @@ top:10px;
 right:20px;
 color:white;
 text-decoration:none;
-opacity:0.7;
-font-size:14px;
+opacity:0.8;
 }
 </style>
 </head>
@@ -67,10 +66,10 @@ font-size:14px;
 <a id="x" href="https://x.com/derionhq">@derionhq</a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
+<script type="module">
 
-<script>
+import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 
 const scene = new THREE.Scene()
 
@@ -95,12 +94,11 @@ scene.add(light)
 
 scene.add(new THREE.AmbientLight(0xffffff,1))
 
-const loader = new THREE.GLTFLoader()
+const loader = new GLTFLoader()
 
 loader.load(
 "https://threejs.org/examples/models/gltf/Lobster.glb",
-
-function(gltf){
+(gltf)=>{
 
 const lobster = gltf.scene
 
@@ -109,20 +107,16 @@ lobster.scale.set(2,2,2)
 scene.add(lobster)
 
 function animate(){
-
 requestAnimationFrame(animate)
 
 lobster.rotation.y += 0.01
 
 renderer.render(scene,camera)
-
 }
 
 animate()
 
-}
-
-)
+})
 
 </script>
 
