@@ -62,14 +62,12 @@ opacity:0.8;
 <div class="dot green"></div>
 
 <div id="title">FCMOLT / Lobster Engine</div>
-
 <a id="x" href="https://x.com/derionhq">@derionhq</a>
 </div>
 
-<script type="module">
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
-import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
-import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
+<script>
 
 const scene = new THREE.Scene()
 
@@ -88,35 +86,54 @@ document.body.appendChild(renderer.domElement)
 
 renderer.domElement.style.marginTop="40px"
 
+const group = new THREE.Group()
+
+// body
+const body = new THREE.SphereGeometry(1,64,64)
+const mat = new THREE.MeshStandardMaterial({
+color:0xff00aa,
+emissive:0xaa0077,
+metalness:1,
+roughness:0.2
+})
+
+const bodyMesh = new THREE.Mesh(body,mat)
+group.add(bodyMesh)
+
+// claws
+for(let i=0;i<2;i++){
+
+const clawGeo = new THREE.ConeGeometry(0.3,1,32)
+const claw = new THREE.Mesh(clawGeo,mat)
+
+claw.position.x = i===0 ? -1.2 : 1.2
+claw.position.y = 0.4
+claw.rotation.z = i===0 ? -1 : 1
+
+group.add(claw)
+
+}
+
+scene.add(group)
+
 const light = new THREE.PointLight(0xff00cc,3)
 light.position.set(5,5,5)
 scene.add(light)
 
 scene.add(new THREE.AmbientLight(0xffffff,1))
 
-const loader = new GLTFLoader()
-
-loader.load(
-"https://threejs.org/examples/models/gltf/Lobster.glb",
-(gltf)=>{
-
-const lobster = gltf.scene
-
-lobster.scale.set(2,2,2)
-
-scene.add(lobster)
-
 function animate(){
+
 requestAnimationFrame(animate)
 
-lobster.rotation.y += 0.01
+group.rotation.y += 0.01
+group.rotation.x += 0.003
 
 renderer.render(scene,camera)
+
 }
 
 animate()
-
-})
 
 </script>
 
