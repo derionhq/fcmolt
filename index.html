@@ -5,7 +5,6 @@
 <title>FCMOLT</title>
 
 <style>
-
 body{
 margin:0;
 background:black;
@@ -53,7 +52,6 @@ text-decoration:none;
 opacity:0.7;
 font-size:14px;
 }
-
 </style>
 </head>
 
@@ -65,14 +63,13 @@ font-size:14px;
 <div class="dot green"></div>
 
 <div id="title">FCMOLT / Lobster Engine</div>
-
 <a id="x" href="https://x.com/derionhq">@derionhq</a>
-
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script type="module">
 
-<script>
+import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 
 const scene = new THREE.Scene()
 
@@ -83,7 +80,7 @@ window.innerWidth/window.innerHeight,
 1000
 )
 
-camera.position.z = 3
+camera.position.z = 4
 
 const renderer = new THREE.WebGLRenderer({antialias:true})
 renderer.setSize(window.innerWidth,window.innerHeight)
@@ -91,38 +88,40 @@ document.body.appendChild(renderer.domElement)
 
 renderer.domElement.style.marginTop="40px"
 
-const geometry = new THREE.TorusKnotGeometry(0.9,0.35,200,32)
+const light = new THREE.PointLight(0xff00cc,3)
+light.position.set(5,5,5)
+scene.add(light)
 
-const material = new THREE.MeshStandardMaterial({
-color:0xff00aa,
-emissive:0xaa0077,
-metalness:1,
-roughness:0.25
+scene.add(new THREE.AmbientLight(0xffffff,1))
+
+const loader = new GLTFLoader()
+
+loader.load("/lobster.glb",(gltf)=>{
+
+const lobster = gltf.scene
+
+lobster.scale.set(1.5,1.5,1.5)
+
+lobster.traverse((child)=>{
+if(child.isMesh){
+child.material.emissive = new THREE.Color(0xaa0077)
+child.material.emissiveIntensity = 0.6
+}
 })
 
-const mesh = new THREE.Mesh(geometry,material)
-
-scene.add(mesh)
-
-const light1 = new THREE.PointLight(0xff00aa,3)
-light1.position.set(5,5,5)
-scene.add(light1)
-
-const ambient = new THREE.AmbientLight(0xffffff,0.6)
-scene.add(ambient)
+scene.add(lobster)
 
 function animate(){
-
 requestAnimationFrame(animate)
 
-mesh.rotation.x += 0.01
-mesh.rotation.y += 0.015
+lobster.rotation.y += 0.01
 
 renderer.render(scene,camera)
-
 }
 
 animate()
+
+})
 
 </script>
 
